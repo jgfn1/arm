@@ -7,6 +7,7 @@
 # sudo apt-get install libc6-armel-cross libc6-dev-armel-cross
 # sudo apt-get install binutils-arm-linux-gnueabi
 # sudo apt-get install libncurses5-dev
+# sudo apt-get install qemu-user-static
 
 arm-linux-gnueabi-as -o $1.o $1.s
 arm-linux-gnueabi-ld -o $1 $1.o
