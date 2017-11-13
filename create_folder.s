@@ -3,21 +3,33 @@ Create a new directory called time_logs. Make sure to use octal
 RWX permission 700 as converted to int 448.
 */
 
-.bss	;unintialized variables section
-
+.bss	/*unintialized variables section*/
 .data	
-
+	folder_name: .asciz "time_logs"
 .text
-		.global main
+		.global _start
 
-main:
+_start:
 	nop
-	bl create_folder ;branches to the create_folder routine
+	bl create_folder /*branches to the create_folder routine*/
 
 create_folder:
-	;push {r1-r3, lr}
+	ldr r0, =folder_name /*passing folder name as an
+	argument to mkdir*/
+	mov r7, #39 /*mkdir syscall no. on r7.
+	r7 is the default reg used to determine the syscall no.*/
+	svc 0	/*requests permission and makes the syscall,
+	the 0 value is a default parameter for linux*/
 
+change_permissions:
+	mov r1, #448 	/*permissions passed as an argument 
+	through reg 1*/
+	ldr r0, =folder_name /*folder name passed*/
+	/*the order of the arguments needs to be inverted*/
+	mov r7, #15 /*chmod syscall*/
+	svc 0 /*syscall*/
+	
 exit:
-	mov r7, #1 	;exit code
-	mov r0, #0	;returns 0 to the OS
-	svc #0		;system call instruction
+	mov r7, #1 	/*exit code*/
+	mov r0, #0	/*returns 0 to the OS*/
+	svc #0		/*system call instruction*/
