@@ -1,2 +1,2 @@
 # arm
-Learning Assembly ARM by myself.
+Learning ARM Assembly by myself.
