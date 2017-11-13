@@ -3,7 +3,7 @@ Create a new directory called time_logs. Make sure to use octal
 RWX permission 700 as converted to int 448.
 */
 
-.bss	/*unintialized variables section*/
+.bss	/*unitialized variables section*/
 .data	
 	folder_name: .asciz "time_logs"
 .text
