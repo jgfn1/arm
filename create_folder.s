@@ -1,3 +1,8 @@
+/*Question description:
+Create a new directory called time_logs. Make sure to use octal
+RWX permission 700 as converted to int 448.
+*/
+
 .bss	;unintialized variables section
 
 .data	
@@ -14,5 +19,5 @@ create_folder:
 
 exit:
 	mov r7, #1 	;exit code
-	mov r0, 0#	;returns 0 to the OS
+	mov r0, #0	;returns 0 to the OS
 	svc #0		;system call instruction
