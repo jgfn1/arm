@@ -14,7 +14,7 @@ ldr r2, =len
 mov r7, #4 
 svc #0 
 
-/* exit syscall */
+/* exit system call */
 mov r0, #0 
 mov r7, #1 
 svc #0
