@@ -11,7 +11,6 @@ RWX permission 700 as converted to int 448.
 
 _start:
 	nop
-	bl create_folder /*branches to the create_folder routine*/
 
 create_folder:
 	ldr r0, =folder_name /*passing folder name as an
@@ -19,12 +18,12 @@ create_folder:
 	mov r7, #39 /*mkdir syscall no. on r7.
 	r7 is the default reg used to determine the syscall no.*/
 	svc 0	/*requests permission and makes the syscall,
-	the 0 value is a default parameter for linux*/
+	the 0 value is the default parameter for linux*/
 
 change_permissions:
 	mov r1, #448 	/*permissions passed as an argument 
 	through reg 1*/
-	ldr r0, =folder_name /*folder name passed*/
+	ldr r0, =folder_name /*folder name passed as an argument*/
 	/*the order of the arguments needs to be inverted*/
 	mov r7, #15 /*chmod syscall*/
 	svc 0 /*syscall*/
