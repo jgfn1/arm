@@ -6,9 +6,7 @@ Main steps of a ping program:
 		- Create a socket: http://man7.org/linux/man-pages/man2/socket.2.html
 		- Bind to it: http://man7.org/linux/man-pages/man2/bind.2.html
 	
-	2 - Sends packet.
-		- Send a message: http://man7.org/linux/man-pages/man2/send.2.html
-		- http://man7.org/linux/man-pages/man7/packet.7.html
+	2 - Sends packet. (Write into the socket file)
 	3 - Gets sys_time (1).
 	
 	4 - Wait for the packet receival.
@@ -21,8 +19,7 @@ Main steps of a ping program:
 	
 	7 - Elapsed time = sys_time(2) - sys_time(1)
 	
-	8 - Prints a string with the packet size, accessed URL/IP
-		and the elapsed time.
+	8 - Prints a string with the accessed IP and the elapsed time.
 	
 	9. Jumps to the 1st step.
 
@@ -33,15 +30,19 @@ Main steps of a ping program:
 			https://gist.github.com/geyslan/5174296 
 		Socket client-server tutorial:
 			http://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
+		IPv6 sockaddr structure:
+			http://osr600doc.xinuos.com/en/SDK_netapi/sockC.TheIPv6sockaddrstructure.html
 */
 .data
+	ping_msg: .asciz "Ping message!"
+	len = . - ping_msg
 	format: .asciz "%d"
 	message1: .asciz "Accessed IP: %d | Ping time: %d\n"
 
 .text
-	.global _start
+	.global main
 
-_start:
+main:
 	@ 0 - Reads IP from the keyboard.
 	ldr r0, =format
 	mov r1, sp
@@ -64,7 +65,7 @@ _start:
 	mov r6, #10		@ 10 - AF_INET6
 	push {r6}
 
-	mov r1, sp	@ Passes the args vector in r1
+	mov r1, sp		@ Passes the args vector in r1
 
 	svc #0			@ Creates the socket
 
@@ -73,7 +74,7 @@ _start:
 	@ Preventing seg fault when trying to reconnet before closing socket
 	@ Reference: Starting line 31 from: https://gist.github.com/geyslan/5174296
 	@ r7 already contains the call's number
-	mov r0, 14 @ sys_setsocketopt
+	mov r0, #14 @ sys_setsocketopt
 
 	mov r6, #4		@ sizeof socklen_t
 	push {r6}	 
@@ -100,26 +101,23 @@ _start:
 	mov r6, #10		@ AF_INET6
 	push {r6}
 
-	mov r6, #443	@ port number (https)
+	mov r6, #53	@ port number (https)
 	push {r6}
 
 	@ Did not grasp what exactly should be pushed below.
-	mov r6, #		@ IPv6 flow information
+	mov r6, #0		@ IPv6 flow information: http://osr600doc.xinuos.com/en/SDK_netapi/sockC.TheIPv6sockaddrstructure.html
 	push {r6}
 
-	@ Could not find out how to convert the IP from r8 into a
-	@ number which could be sent in 4 pushes to the stack.
-
-	mov r6, #		@ 4th - Pushes of address are in reverse order
+	mov r6, #0		@ 4th - Pushes of address are in reverse order
 	push {r6}
 
-	mov r6, #		@ 3rd
+	mov r6, #0		@ 3rd
 	push {r6}
 
-	mov r6, #		@ 2nd
+	mov r6, #0		@ 2nd
 	push {r6}
 
-	mov r6, #		@ 1st byte - (Address size = 16 bytes) => 4 pushes 
+	mov r6, r2		@ 1st byte - (Address size = 16 bytes) => 4 pushes 
 	push {r6}
 
 	mov r6, #10		@ AF_INET6
@@ -140,11 +138,13 @@ _start:
 	svc #0
 
 	@ 2 - Sends packet.
-	@ 	- Send a message: http://man7.org/linux/man-pages/man2/send.2.html
-	@ 	- http://man7.org/linux/man-pages/man7/packet.7.html
-
 	/* The best way to send a message is writing
 	into the socket file.*/
+	mov r0, r2 		@ Write to the sockfd
+	ldr r1, =ping_msg
+	ldr r2, =len
+	mov r7, #4		@ Write syscall
+	svc #0
 
 	@ 3 - Gets sys_time (1).
 	@_time0:
