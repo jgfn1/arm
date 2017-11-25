@@ -31,7 +31,7 @@ Main steps of a ping program:
 			http://unix.superglobalmegacorp.com/Net2/newsrc/sys/socket.h.html
 		Server snippet in x86 ASM:
 			https://gist.github.com/geyslan/5174296 
-		Socket tutorial in C:
+		Socket client-server tutorial:
 			http://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
 */
 .data
@@ -88,7 +88,7 @@ _start:
 	
 	push {r2}		@ sockfd
 
-	mov r1, sp	@ ptr to argument array
+	mov r1, sp		@ ptr to argument array
 
 	svc #0
 
@@ -100,10 +100,10 @@ _start:
 	mov r6, #10		@ AF_INET6
 	push {r6}
 
-	@ Did not grasp what exactly should be pushed here.
-	mov r6, #		@ port number
+	mov r6, #443	@ port number (https)
 	push {r6}
 
+	@ Did not grasp what exactly should be pushed below.
 	mov r6, #		@ IPv6 flow information
 	push {r6}
 
@@ -125,7 +125,7 @@ _start:
 	mov r6, #10		@ AF_INET6
 	push {r6}
 
-	mov r1, sp	@ Pointer to the struct
+	mov r1, sp		@ Pointer to the struct
 
 	@ Passing arguments
 	mov r6, #28		@ Size of the struct
@@ -135,7 +135,7 @@ _start:
 
 	push {r2}		@ sockfd
 
-	mov r1, sp	@ Pointer to allargs
+	mov r1, sp		@ Pointer to allargs
 
 	svc #0
 
